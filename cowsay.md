@@ -20,8 +20,9 @@ alle laufenden stoppen und removen
 $ docker stop `docker ps -q` && docker rm `docker ps -a -q`
 ```
 
+## laufenden Container modifizieren
 
-## named Debian Container starten
+### Debian Container starten
 
 Docker Container starten und eine **bash** aufrufen. 
 
@@ -31,9 +32,7 @@ root@cowsay:/# exit
 exit
 ```
 
-    $ docker history debian:stretch-slim
-
-### reconnect Container - Install cowsaw und fortune im Container
+### im Container die Software *cowsay* und *fortune* install
 
 ```
 # docker ps -a
@@ -79,18 +78,56 @@ root@cowsay:/# /usr/games/fortune |/usr/games/cowsay
 root@cowsay:/# exit
 ```
 
-### Docker Image vom Container erstellen
+### Veränderungen anzeigen
+
+Mit `docker diff` lassen sich die Veränderungen an einem laufenden Container gegenüber seinem Image anzeigen.
+
+```
+root@docker:~# docker diff cowsay
+C /etc
+C /etc/ld.so.cache
+C /etc/alternatives
+A /etc/alternatives/rename
+A /etc/services
+A /etc/rpc
+A /etc/network
+A /etc/networks
+A /etc/perl
+A /etc/perl/CPAN
+A /etc/perl/Net
+A /etc/perl/Net/libnet.cfg
+A /etc/perl/sitecustomize.pl
+A /etc/protocols
+C /usr
+C /usr/share
+A /usr/share/cowsay
+A /usr/share/cowsay/cows
+... output truncated
+```
+
+## Docker Image vom modifizierten Container erstellen
+
+### docker commit
 
 ```
 $ docker commit cowsay cowsay:1-0
 sha256:3394945165c33c08027a694632a9fad04b358764f33a83c8aa9015b25111d90b
-
-$ docker images
-REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-cowsay              1-0                 3394945165c3        30 seconds ago      159MB
 ```
 
-### Image Veränderung Debian zu Cowsay
+Nun steht das neu erstellte Image `cowsay:1-0` lokal zur Verfügung.
+
+```
+$ docker images
+REPOSITORY   TAG            IMAGE ID       CREATED          SIZE
+cowsay       1-0            84321b24ac87   28 minutes ago   114MB
+debian       stretch-slim   ab15bb5b14e4   10 days ago      55.4MB
+```
+
+### Image Veränderung
+Nachfolgend sind die Veränderung des `debian:stretch-slim` Image zu dem neu erstellten `cowsay:1-0` Image ersichtlich.
+
+#### docker history
+Mit `docker hostory` lassen sich die Layer eines Images anzeigen. Gut ist hier der zusätzlich Layer  im `cowsay:1-0` Image ersichtlich. Die grösse von 58.7MB entspricht der zusätzlich installierter Softwar inklusive etwas Overhead. 
 
 ```
 $ docker history debian:stretch-slim
@@ -104,8 +141,9 @@ IMAGE               CREATED             CREATED BY                              
 0af60a5c6dd0        12 days ago         /bin/sh -c #(nop)  CMD ["bash"]                 0B
 <missing>           12 days ago         /bin/sh -c #(nop) ADD file:e4bdc12117ee95eaa…   101MB
 ```
+### Container Image *cowsay:1-0* anwenden
 
-### execute 'cowsay' mit Image cowsay:1-0
+Das erstellt `cowsay:1-0` Image kann nun angewendet werden. Es beinhaltet zusätzlich die Installierte Software `cowsay` und `fortune`. Dies können beim Starten des Containers als Argumente zur Ausführung übergeben werden.
 
 ```
 $ docker run cowsay:1-0 /usr/games/cowsay "muuh - cowsay:1-0"
@@ -122,19 +160,37 @@ $ docker run cowsay:1-0 /usr/games/cowsay "muuh - cowsay:1-0"
 
 ## Image mit Dockerfile erstellen
 
-edit  Dockerfile 
-
-    $ vi Dockerfile
+### Dockerfile
+Das `Dockerfile` kann mit einem beliebigen Texteditor erstellt werden. Das Dockerfile beginnt immer mit `FROM` gefolgt vom Baseimage welches für das künftige Image als Grundlage verwendet wird. Die weiteren Zeilen definieren alle weiteren Anweisungen für das neue Image. In diesem Fall werden genau diejenigen Kommandos mit `RUN` definiert, welche zuvor bei der manuellen Modifikation am laufenden Container verwendet wurden.
 
 ```
+$ vi Dockerfile
 FROM debian:stretch-slim
-RUN apt-get update && apt-get install -y cowsay fortune
+RUN apt-get update
+RUN apt-get install -y cowsay fortune
 ```
 
-### build Docker Image
-    $ docker build -t cowsay:1-1 .
+### Docker Image builden
+Das Kommando `docker build` erwartet im selben Verzeichnis wo der Befehla aufgerufen wurde ein `Dockerfile`. Wurde ein abweichender Name verwendet, muss diese `docker build` angegeben werden.
 
-### execute 'cowsay' mit Image cowsay:1-1
+Mit der Option -t wird der Name des erzeugten Images angegeben. Wichtig ist der abschliessende `.`, dieser bedeutet, dass das Dockerfile im aktuellen Verzeichnis gesucht wird.
+
+```
+$ docker build -t cowsay:1-1 .
+```
+Nun steht das neu erstellte Image `cowsay:1-1` lokal zur Verfügung.
+
+```
+$ docker images
+REPOSITORY   TAG            IMAGE ID       CREATED             SIZE
+cowsay       1-1            797220228309   4 minutes ago       114MB
+cowsay       1-0            84321b24ac87   About an hour ago   114MB
+debian       stretch-slim   ab15bb5b14e4   10 days ago         55.4MB
+```
+
+
+
+### Container Image *cowsay:1-1* anwenden
 
 ```
 $ docker run cowsay:1-1 /usr/games/cowsay "muuh - cowsay:1-1"
@@ -150,9 +206,7 @@ $ docker run cowsay:1-1 /usr/games/cowsay "muuh - cowsay:1-1"
 
 ### Docker Image um Entrypoint erweiteren
 
-Add ENTRYPOINT zum Dockerfile
-
-    $ vi Dockerfile
+Ein `ENTRYPOINT` definiert den Startpunkt eines Containers. Wird wie in diesem Beispiel `ENTRYPOINT ["/usr/games/cowsay"]` definiert, startet der Container direkt das Programm `cowsay` und es muss lediglich noch der Input an `cowsay` übergeben werden.
 
 ```` 
 $ vi Dockerfile
@@ -165,7 +219,7 @@ ENTRYPOINT ["/usr/games/cowsay"]
     $ docker build -t cowsay:1-2 .
 
 
-### execute 'cowsay' über ENTRYPOINT
+### execute *cowsay* über ENTRYPOINT
 ````
 # docker run cowsay:1-2 "muuh - cowsay:1-2"
  ______
