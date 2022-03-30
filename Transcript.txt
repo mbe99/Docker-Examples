@@ -1,0 +1,189 @@
+=========================================================================
+01 - Docker Images - https://gitlab.com/mbe99/m300-docker-examples.git
+=========================================================================
+
+# Auf hub.docker.com gehen
+
+https://hub.docker.com
+
+- Images suchen : mariadb
+- Verschiedene Tags
+
+# Help von Docker
+$ docker 
+$ docker image
+
+# vorhandene Images listen
+
+$ docker image ls
+$ docker images
+
+
+# busybox Image in lates Version pullen
+$ docker pull busybox
+
+# Image listen
+$ docker images
+
+# busybox Image in der Alpine Version musl pullen
+$ docker pull busybox:musl
+
+# Image listen
+$ docker images
+
+## Image debuggen
+
+# Image History (layer)
+$ docker image history busybox:musl
+
+# Image inspect
+$ docker image inspect busybox:musl
+
+# wo sind die Images und Container auf dem Hostsystem abgelegt?
+$ ls -l /var/lib/docker
+
+
+# ein Image löschen
+$ docker images
+$ docker rmi busybox:musl
+
+
+# nur ID der Images listen
+$ docker pull busybox:stable-musl
+$ docker pull busybox:1.35.0-musl
+$ docker pull busybox:1.34-musl
+$ docker images -q
+
+# weshalb hat es zweimal dieselbe Image ID?
+$ docker images
+
+# alle vorhandenen Images löschen
+$ docker images -q
+$ docker rmi $(docker images -q)
+
+
+## Images importieren und exportieren
+
+# zuvor ge-pulltes Image als TAR-File sichern
+$ docker pull busybox:1.33.0-musl
+$ docker save 1f8bca985304 -o busybox.1.33.0-musl.tar
+$ ls
+$ docker rmi 1f8bca985304
+$ docker images
+
+# Image aus TAR-File in lokale Registry laden
+$ docker load -i busybox.1.33.0-musl.tar
+$ docker images
+
+
+
+
+
+=========================================================================
+02 - Docker run
+=========================================================================
+
+
+# Mit `docker run` Image pullen und Container starten
+$ docker images
+$ docker run hello-world
+$ docker images
+
+# Container starten und interaktiv /bin/sh ausführen
+
+$ docker run -it busybox /bin/sh
+
+# mit `docker ps` laufende Container aud zweiter ssh Session listen
+
+# mit `exit` aus Container gehen und `docker ps` erneu ausführen
+$ docker ps
+
+# kein Container ersichtlich, was ist passiert?
+$ docker ps -a
+
+# Container mit cmd `sleep 5` ausführen
+$ docker run busybox sleep 5
+
+# Container nochmals starten, diesmal aber mit der Option `-d` (detatched)
+$ docker run -d busybox sleep 10
+$ docker ps
+
+#  Container starten und mit Option `--name` einen definierten Namen verwenden
+$ docker run -it --name box busybox
+$ docker ps -a
+
+
+# Beendeter Container mit `docker start` erneut starten
+$ docker start box
+$ docker ps
+
+# Interaktionen mit einem laufenden Container
+$ docker exec box ls
+$ docker ps
+$ docker exec box /bin/sh
+
+# weshalb kommt kein Shell Prompt (/ #) ?
+# `docker exec` erneut ausführen, diesmal aber mit der Option -it (interaktiv)
+$ docker exec -it box /bin/sh
+
+# laufender Container stoppen (entweder mit Container ID oder Container Name)
+$ docker stop box
+$ docker ps -a
+
+# gestoppter Container mit `docker rm` komplett löschen (entweder mit Container ID oder Container Name)
+$ docker rm box
+$ docker ps -a
+
+# mit Option `--rm` Container so starten, dass dieser beim Beenden des Containers gleichzeitig auch gelöscht wird
+$ docker run -it --rm  busybox /bin/sh
+$ docker ps -a
+
+
+# ports
+############################################
+
+# apache Container mit Option `-d` starten
+$ docker run -d httpd:alpine
+
+# `docker ps` zeigt, dass der Container interne Port 80 bereitstellt
+$ docker ps
+
+# Port 80 des Containers an das Hostsystem (in diesem Fall die Vagrant VM) weiterleiten
+$ docker run -d -p 8081:80 httpd:alpine
+
+
+
+# volumes
+############################################
+
+# interaktiv die Shell im Apache Container starten und ein `ls htdocs` ausführen. 
+$ docker run -it httpd:alpine /bin/sh
+
+# http Container nun mit der Option `-v` starten und so ein Verzeichnis des Hostsystem in den Container mounten
+# zudem geben wir dem Container einen Namen und leiten Port 80 des Container nach  Port 8082 des Hostsystems
+# /mnt auf dem Hostsystem ist ein Vagrant Sync-Verzeichnis des VM-Hostsystem.
+
+$ docker run -d --rm --name apache -v /mnt:/usr/local/apache2/htdocs -p 8082:80 httpd:alpine
+
+# Die index.html Datei, welche vom httpd des Containers angezeigt wird, liegt tatsächlich ausserhalb des Containers und
+# bleibt deshalb beim Löschen des Containers weiterhin erhalten.
+
+# mit `docker inspect` kann die Konfiguration des Volumes angezeigt werden
+$ docker inspect apache |grep -A 10 Mount
+
+# Container mit `docker stop` beenden, da er mit --rm gestartet wurde, wird der gesamte Container auch gelöscht
+$ docker stop apache
+$ docker ps -a
+
+# wird der Container mit demselben Volume wieder gestartet, steht auch das index.html des Hostsystem wieder zur Verfügung
+$ docker run -d --rm --name apache -v /mnt:/usr/local/apache2/htdocs -p 8082:80 httpd:alpine
+
+# resp. ohne das Volume würde einfach das index.html des Containers angezeigt werden
+$ docker stop apache
+$ docker run -d --rm --name apache  -p 8082:80 httpd:alpine
+
+# mit der Option `-e` Environment Variablen übergeben. Welche Variablen unterstützt sind, hängt vom Image ab
+$ docker run -e MYSQL_ROOT_PASSWORD=my-secret-pw -p 3306:3306 mariadb:10.7.3
+
+
+

@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+  db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: developer
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8082:8080
