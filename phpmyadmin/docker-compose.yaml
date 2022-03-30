@@ -7,12 +7,12 @@ services:
      - /tmp/data/mysql:/var/lib/mysql
     restart: always
     environment:
-     MYSQL_ROOT_PASSWORD: sehr_geheim
+     MYSQL_ROOT_PASSWORD: top-secret
   web:
     depends_on:
      - db
     image: phpmyadmin/phpmyadmin
     container_name: webserver
     ports:
-     - "8081:80"
+     - "8082:80"
     restart: always
