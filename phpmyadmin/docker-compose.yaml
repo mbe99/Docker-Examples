@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:5.7
+    container_name: database
+    volumes:
+     - /tmp/data/mysql:/var/lib/mysql
+    restart: always
+    environment:
+     MYSQL_ROOT_PASSWORD: sehr_geheim
+  web:
+    depends_on:
+     - db
+    image: phpmyadmin/phpmyadmin
+    container_name: webserver
+    ports:
+     - "8081:80"
+    restart: always
