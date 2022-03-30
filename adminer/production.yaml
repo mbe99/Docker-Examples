@@ -2,10 +2,10 @@ version: '3.1'
 
 services:
   db:
-    image: mariadb:latest
+    image: mariadb:10.6
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: developer
+      MARIADB_ROOT_PASSWORD: prod
 
   adminer:
     image: adminer
