@@ -3,7 +3,7 @@ services:
   db:
     image: mariadb:latest 
     volumes:
-     - ./data/mysql:/var/lib/mysql
+     - /tmp/data/mysql:/var/lib/mysql
     restart: always
     environment:
      MYSQL_ROOT_PASSWORD: top-secret
