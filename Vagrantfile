@@ -56,8 +56,8 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # add ssh public keys for root and vagrant 
-  config.vm.provision "shell", path: "add_ssh_pub.sh"
+  config.vm.provision "shell", path: "misc/add_ssh_pub.sh"
   # add alias
-  config.vm.provision "shell", path: "add_alias.sh"
+  config.vm.provision "shell", path: "misc/add_alias.sh"
   
 end

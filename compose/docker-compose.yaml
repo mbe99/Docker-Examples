@@ -1,0 +1,40 @@
+version: '3.2'
+
+services:
+  mysql-client:
+    image: alpine:edge
+    volumes:
+      - type: bind
+        source: ./workspace
+        target: /root/workspace
+    networks:
+      - docknet
+    command: ping 127.0.0.1
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    networks:
+      - docknet
+    volumes:
+      - type: volume
+        source: dbdata
+        target: /var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - docknet
+
+networks:
+    docknet:
+        external: true
+
+volumes:
+  dbdata:
+    external: true
