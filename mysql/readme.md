@@ -1,64 +1,53 @@
 # Mysql
 
-## Mysql Client installieren
+## Container Image mit Mysql Client erstellen
+Ein Container Image erstellen, welches nach dem Starten eine Verbindung zu einer MySQL datenbank welche in einem anderen Container läuft aufbaut. Die Komunikation erfolgt dabei ausschliesslich in einem dedizierten 
 
-für Ubuntu
+### Dockerfile 
 
-    sudo apt-get install -y mysql-client-core-5.7
+```
+FROM debian:stretch-slim
+RUN apt-get update && apt-get install -y mysql-client
+ENTRYPOINT mysql -uroot -p -h 172.77.1.2
+```
 
-für Centos
+### Image builden
 
-     yum install -y mysql
+```
+$ docker build -t sqlclient .
+```
 
 
-
-## Mysql Docker Image ausführen
+### Mysql Docker Image ausführen und Ports exposen
 
 Mysql wird Port 3306 exposen. Das Mysql Datenverzeichnis wird lokal nach **/opt/data** geschrieben. Das Mysql Password wird  über die Environment Variable **MYSQL_ROOT_PASSWORD=passwd** gesetzt.
 
-    docker  run --name db01 -v /opt/data:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=passwd -d mysql:5.7
+    $ docker  run --name db01 -v /opt/data:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=passwd -d mysql:5.7
+
+Mit `telnet` Port testen
+
+    $ telnet localhost 3306
 
 
-## Mysql testen
+###
 
-> **-h 10.0.2.15** ist die IP Adresse der VM und muss ggF. angepasst werden. Zum Testen eine neue Datenbank **newdb** anlegen und als Kontrolle im Verzeichniss **/opt/data** zeigen.
+Internet Netzwerk `mynet` erstellen
 
-````
-root@ubuntu-xenial:/opt/data# mysql -uroot -p -h 10.0.2.15
-Enter password:
-Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 6
-Server version: 5.7.25 MySQL Community Server (GPL)
+    $ docker network create --subnet 172.77.1.0/24 mynet
 
-Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
 
-Oracle is a registered trademark of Oracle Corporation and/or its
-affiliates. Other names may be trademarks of their respective
-owners.
 
-Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-mysql> create database newdb;
-Query OK, 1 row affected (0.01 sec)
+### Mysql Docker Image ausführen und interners Netzwerk `mynet` verwenden
 
-mysql> exit
-Bye
-root@ubuntu-xenial:/opt/data# ls -l
-total 188480
--rw-r----- 1 vboxadd vboxsf       56 Mar 18 12:30 auto.cnf
--rw------- 1 vboxadd vboxsf     1679 Mar 18 12:30 ca-key.pem
--rw-r--r-- 1 vboxadd vboxsf     1107 Mar 18 12:30 ca.pem
--rw-r--r-- 1 vboxadd vboxsf     1107 Mar 18 12:30 client-cert.pem
--rw------- 1 vboxadd vboxsf     1679 Mar 18 12:30 client-key.pem
--rw-r----- 1 vboxadd vboxsf     1340 Mar 18 12:30 ib_buffer_pool
--rw-r----- 1 vboxadd vboxsf 79691776 Mar 18 12:30 ibdata1
--rw-r----- 1 vboxadd vboxsf 12582912 Mar 18 12:30 ibtmp1
-drwxr-x--- 2 vboxadd vboxsf     4096 Mar 18 12:30 mysql
-drwxr-x--- 2 vboxadd vboxsf     4096 Mar 18 12:37 newdb
-drwxr-x--- 2 vboxadd vboxsf     4096 Mar 18 12:30 performance_schema
--rw------- 1 vboxadd vboxsf     1679 Mar 18 12:30 private_key.pem
--rw-r--r-- 1 vboxadd vboxsf      451 Mar 18 12:30 public_key.pem
--rw-r--r-- 1 vboxadd vboxsf     1107 Mar 18 12:30 server-cert.pem
--rw------- 1 vboxadd vboxsf     1675 Mar 18 12:30 server-key.pem
-drwxr-x--- 2 vboxadd vboxsf    12288 Mar 18 12:30 sys
-root@ubuntu-xenial:/opt/data#
+    $ docker  run --name db01 -v /opt/data:/var/lib/mysql --network mynet -e MYSQL_ROOT_PASSWORD=passwd -d mysql:5.7
+
+
+### Client Container starten
+
+Der MySQL Client im Container verbindet sich über das Docker Netzwerk `mynet` mit der Datenbank im Container `db01`. Die Kommunikation zwischen Client uns Server ist nur innerhalb diesem Netzwerk möglich und von aussen her nicht zugänglich
+
+Mit `telnet` Port testen
+
+    $ telnet localhost 3306
+
