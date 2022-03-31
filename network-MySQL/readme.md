@@ -1,6 +1,6 @@
-# Mysql / MySQL Client über Docker-Netzwerk betreiben
+# MySQL-Client mit MySQL-Server über Docker-Netzwerk
 
-## Container Image mit Mysql Client erstellen
+## Aufgabe
 Ein Container Image erstellen das nach dem Starten direkt eine Verbindung zu einer MySQL Datenbank, welche ebenfalls in einem Container läuft, aufbaut. Die Kommunikation erfolgt dabei ausschliesslich über ein dedizierte Docker-Netzwerk welches von ausserhalb nicht zugänglich ist.
 
 ### Dockerfile 
