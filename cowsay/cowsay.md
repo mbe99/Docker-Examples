@@ -1,25 +1,5 @@
 # cowsay
 
-## Container stoppen 
-
-alle laufenden Conatiner stoppen
-
-```
-$ docker stop `docker ps -q`
-```
-
-alle gestoppten Container removen
-
-```
-$ docker rm `docker ps -a -q`
-```
-
-alle laufenden stoppen und removen
-
-```
-$ docker stop `docker ps -q` && docker rm `docker ps -a -q`
-```
-
 ## laufenden Container modifizieren
 
 ### Debian Container starten
