@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   config.vm.hostname = "docker"
-  # config.vm.network "private_network", ip:"192.168.60.101"
+  config.vm.network "private_network", ip:"192.168.60.101"
   # Share an additional folder to the guest VM.
   config.vm.synced_folder ".", "/mnt"
 
