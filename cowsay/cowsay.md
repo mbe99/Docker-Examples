@@ -107,7 +107,7 @@ debian       bookworm-slim  ab15bb5b14e4   10 days ago      55.4MB
 Nachfolgend sind die Veränderung des `debian:bookworm-slim` Image zu dem neu erstellten `cowsay:1-0` Image ersichtlich.
 
 #### docker history
-Mit `docker hostory` lassen sich die Layer eines Images anzeigen. Gut ist hier der zusätzlich Layer  im `cowsay:1-0` Image ersichtlich. Die grösse von 58.7MB entspricht der zusätzlich installierter Softwar inklusive etwas Overhead. 
+Mit `docker history` lassen sich die Layer eines Images anzeigen. Gut ist hier der zusätzlich Layer  im `cowsay:1-0` Image ersichtlich. Die grösse von 58.7MB entspricht der zusätzlich installierter Softwar inklusive etwas Overhead. 
 
 ```
 $ docker history debian:bookworm-slim
@@ -151,7 +151,7 @@ RUN apt-get install -y cowsay fortune
 ```
 
 ### Docker Image builden
-Das Kommando `docker build` erwartet im selben Verzeichnis wo der Befehla aufgerufen wurde ein `Dockerfile`. Wurde ein abweichender Name verwendet, muss diese `docker build` angegeben werden.
+Das Kommando `docker build` erwartet im selben Verzeichnis ein `Dockerfile`. Wurde ein abweichender Name verwendet, muss dies `docker build` angegeben werden.
 
 Mit der Option -t wird der Name des erzeugten Images angegeben. Wichtig ist der abschliessende `.`, dieser bedeutet, dass das Dockerfile im aktuellen Verzeichnis gesucht wird.
 

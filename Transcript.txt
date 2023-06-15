@@ -186,4 +186,25 @@ $ docker run -d --rm --name apache  -p 8082:80 httpd:alpine
 $ docker run -e MYSQL_ROOT_PASSWORD=my-secret-pw -p 3306:3306 mariadb:10.7.3
 
 
+#K35 Absichern
+##############
 
+# cAdvisor --> Port 8081
+$ docker run -d --name cadvisor -v /:/rootfs:ro -v /var/run:/var/run:rw -v /sys:/sys:ro -v /var/lib/docker/:/var/lib/docker:ro -p 8081:8080 google/cadvisor:latest
+
+# root --> check /homeroot --> cekeck id
+$ docker run -v /:/homeroot -it busybox sh
+/ # id
+uid=0(root) gid=0(root) groups=10(wheel)
+
+# CPU Begrenzung
+################
+
+# --> cADvisor beobachten
+
+$ docker run -d --name load1 -c 2048 amouat/stress
+$ docker run -d --name load2 amouat/stress
+$ docker run -d --name load3 -c 512 amouat/stress
+$ docker run -d --name load4 -c 512 amouat/stress
+
+$ docker stats $(docker inspect -f {{.Name}} $(docker ps -q))
