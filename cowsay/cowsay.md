@@ -7,7 +7,7 @@
 Docker Container starten und eine **bash** aufrufen. 
 
 ```
-# docker run -it --name cowsay --hostname cowsay debian:stretch-slim bash
+# docker run -it --name cowsay --hostname cowsay debian:bookworm-slim bash
 root@cowsay:/# exit
 exit
 ```
@@ -15,9 +15,9 @@ exit
 ### im Container die Software *cowsay* und *fortune* install
 
 ```
-# docker ps -a
-CONTAINER ID   IMAGE                 COMMAND                  CREATED          STATUS                       PORTS     NAMES
-1aa442bb70be   debian:stretch-slim   "bash"                   2 minutes ago    Exited (0) 18 seconds ago              cowsay
+root@docker:~# docker ps -a
+CONTAINER ID   IMAGE                  COMMAND   CREATED          STATUS          PORTS     NAMES
+9fabddc33b45   debian:bookworm-slim   "bash"    16 seconds ago   Up 16 seconds             cowsay
 
 # docker start cowsay
 
@@ -100,17 +100,17 @@ Nun steht das neu erstellte Image `cowsay:1-0` lokal zur Verfügung.
 $ docker images
 REPOSITORY   TAG            IMAGE ID       CREATED          SIZE
 cowsay       1-0            84321b24ac87   28 minutes ago   114MB
-debian       stretch-slim   ab15bb5b14e4   10 days ago      55.4MB
+debian       bookworm-slim  ab15bb5b14e4   10 days ago      55.4MB
 ```
 
 ### Image Veränderung
-Nachfolgend sind die Veränderung des `debian:stretch-slim` Image zu dem neu erstellten `cowsay:1-0` Image ersichtlich.
+Nachfolgend sind die Veränderung des `debian:bookworm-slim` Image zu dem neu erstellten `cowsay:1-0` Image ersichtlich.
 
 #### docker history
 Mit `docker hostory` lassen sich die Layer eines Images anzeigen. Gut ist hier der zusätzlich Layer  im `cowsay:1-0` Image ersichtlich. Die grösse von 58.7MB entspricht der zusätzlich installierter Softwar inklusive etwas Overhead. 
 
 ```
-$ docker history debian:stretch-slim
+$ docker history debian:bookworm-slim
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
 0af60a5c6dd0        12 days ago         /bin/sh -c #(nop)  CMD ["bash"]                 0B
 <missing>           12 days ago         /bin/sh -c #(nop) ADD file:e4bdc12117ee95eaa…   101MB
@@ -145,7 +145,7 @@ Das `Dockerfile` kann mit einem beliebigen Texteditor erstellt werden. Das Docke
 
 ```
 $ vi Dockerfile
-FROM debian:stretch-slim
+FROM debian:bookworm-slim
 RUN apt-get update
 RUN apt-get install -y cowsay fortune
 ```
@@ -165,7 +165,7 @@ $ docker images
 REPOSITORY   TAG            IMAGE ID       CREATED             SIZE
 cowsay       1-1            797220228309   4 minutes ago       114MB
 cowsay       1-0            84321b24ac87   About an hour ago   114MB
-debian       stretch-slim   ab15bb5b14e4   10 days ago         55.4MB
+debian       bookworm-slim  ab15bb5b14e4   10 days ago         55.4MB
 ```
 
 
@@ -190,7 +190,7 @@ Ein `ENTRYPOINT` definiert den Startpunkt eines Containers. Wird wie in diesem B
 
 ```` 
 $ vi Dockerfile
-FROM debian:stretch-slim
+FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y cowsay fortune
 ENTRYPOINT ["/usr/games/cowsay"]
 ```` 
