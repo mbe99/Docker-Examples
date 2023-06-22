@@ -51,7 +51,7 @@ Der MySQL-Server ist jetzt nur noch im Docker-Netzwerk `mynet` über Port 3306 e
 Mit `nc` Port `3306` testen
 
 ```
-L# nc -vz localhost 3306
+# nc -vz localhost 3306
 nc: connect to localhost (127.0.0.1) port 3306 (tcp) failed: Connection refused
 ```
 
