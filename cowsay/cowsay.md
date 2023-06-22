@@ -14,7 +14,7 @@ Container *cowsay* stopen (durch exit in der `bash`)
 
 
 
-## im Container die Software *cowsay* und *fortune* installiern (Container modifizieren)
+## Im Container die Software *cowsay* und *fortune* installiern (Container modifizieren)
 
 Container *cowsay* starten
 
