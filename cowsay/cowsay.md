@@ -1,5 +1,10 @@
 # cowsay - Image erstellen
 
+
+* [Variante 1 - Image von modifiziertem Container builden (imperativ)](#im-container-die-software-cowsay-und-fortune-installiern-container-modifizieren)
+* [Variante 2 - Image von Dockerfile erstellen (deklarativ)](#image-mit-dockerfile-erstellen)
+
+
 ## Debian Container starten
 
 Container *cowsay* starten und eine `bash` aufrufen. 
