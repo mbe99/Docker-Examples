@@ -5,7 +5,7 @@
 Container *cowsay* starten und eine `bash` aufrufen. 
 
 ```
-# docker run -it --name cowsay --hostname cowsay debian:bookworm-slim bash
+# docker run -it --name cowsay --hostname cowsay registry.gitlab.com/mbe99/docker-work/debian:bookworm-slim bash
 root@cowsay:/# exit
 ```
 
@@ -112,7 +112,7 @@ Nachfolgend sind die Veränderungen des `debian:bookworm-slim` Image zu dem neu 
 Mit `docker history` lassen sich die Layer eines Images anzeigen. Gut ist hier der zusätzlich Layer  im `cowsay:1-0` Image ersichtlich. Die grösse von 69.7MB entspricht der zusätzlich installierter Software inklusive etwas Overhead. Da die Veränderungen in der `bash` erfolgten, wird dies unter *CREATED BY* entsprechend als `bash` ausgewiesen.
 
 ```
-$ docker history debian:bookworm-slim
+$ docker history registry.gitlab.com/mbe99/docker-work/debian:bookworm-slim
 IMAGE          CREATED      CREATED BY                                      SIZE      COMMENT
 e7d7f06a08a8   9 days ago   /bin/sh -c #(nop)  CMD ["bash"]                 0B
 <missing>      9 days ago   /bin/sh -c #(nop) ADD file:ba1250b6ecd5dd09d…   74.8MB
@@ -152,7 +152,7 @@ Das `Dockerfile` kann mit einem beliebigen Texteditor erstellt werden. Das Docke
 
 ```
 $ vi Dockerfile
-FROM debian:bookworm-slim
+FROM registry.gitlab.com/mbe99/docker-work/debian:bookworm-slim
 RUN apt-get update
 RUN apt-get install -y cowsay fortune
 ```
@@ -198,7 +198,7 @@ Der `ENTRYPOINT` definiert den Startpunkt eines Containers. Wird wie in diesem B
 
 ```` 
 $ vi Dockerfile
-FROM debian:bookworm-slim
+FROM registry.gitlab.com/mbe99/docker-work/debian:bookworm-slim
 RUN apt-get update && apt-get install -y cowsay fortune
 ENTRYPOINT ["/usr/games/cowsay"]
 ```` 

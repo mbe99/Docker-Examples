@@ -8,7 +8,7 @@ Ein Container Image erstellen welches nach dem Starten direkt eine Verbindung zu
 Mit dem `ENTRYPOINT mysql -uroot -p -h 172.77.1.2` wird sich der Client nach dem Starten des Container direkt mit der angegebenen Datenbank unter `172.77.1.2`vebinden
 
 ```
-FROM debian:bookworm-slim
+FROM registry.gitlab.com/mbe99/docker-work/debian:bookworm-slim
 RUN apt-get update && apt-get install -y mysql-client
 ENTRYPOINT mysql -uroot -p -h 172.77.1.2
 ```
@@ -23,7 +23,7 @@ MySQL-Client Image builden
 
 Mysql Container mit Port 3306 exposed. Das Mysql Datenverzeichnis wird lokal nach **/opt/data** geschrieben. Das Mysql Password wird  über die Environment Variable **MYSQL_ROOT_PASSWORD=passwd** gesetzt.
 
-    $ docker  run --rm --name db01 -v /opt/data:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=passwd -d mariadb:10.6.14
+    $ docker  run --rm --name db01 -v /opt/data:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=passwd -d registry.gitlab.com/mbe99/docker-work/mariadb:10.6.14
 
 Mit `nc` Port `3306` testen
 
@@ -44,7 +44,7 @@ Docker Netzwerk `mynet` mit dem Subnet `172.77.1.0/24` erstellen
 
 MySQL Container mit Docker-Netzwerk `mynet` und statischer IP `172.77.1.2` starten.
 
-    $ docker  run --rm --name db01 -v /opt/data:/var/lib/mysql --network mynet --ip 172.77.1.2 -e MYSQL_ROOT_PASSWORD=passwd -d mariadb:10.6.14
+    $ docker  run --rm --name db01 -v /opt/data:/var/lib/mysql --network mynet --ip 172.77.1.2 -e MYSQL_ROOT_PASSWORD=passwd -d registry.gitlab.com/mbe99/docker-work/mariadb:10.6.14
 
 Der MySQL-Server ist jetzt nur noch im Docker-Netzwerk `mynet` über Port 3306 erreichbar. Vom Hostsystem ist kein Zugriff auf den Port 3306 des MySQL-Server möglich.
 
