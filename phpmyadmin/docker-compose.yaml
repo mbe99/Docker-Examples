@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   db:
-    image: mysql:5.7
+    image: registry.gitlab.com/mbe99/docker-work/mysql:5.7
     container_name: database
     volumes:
      - /tmp/data/mysql:/var/lib/mysql
@@ -11,7 +11,7 @@ services:
   web:
     depends_on:
      - db
-    image: phpmyadmin/phpmyadmin
+    image: registry.gitlab.com/mbe99/docker-work/phpmyadmin:latest
     container_name: webserver
     ports:
      - "8082:80"
