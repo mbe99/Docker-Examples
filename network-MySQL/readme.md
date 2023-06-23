@@ -9,7 +9,7 @@ Mit dem `ENTRYPOINT mysql -uroot -p -h 172.77.1.2` wird sich der Client nach dem
 
 ```
 FROM debian:bookworm-slim
-RUN apt-get update && apt-get install -y mysql-client
+RUN apt-get update && apt-get install -y default-mysql-client
 ENTRYPOINT mysql -uroot -p -h 172.77.1.2
 ```
 
