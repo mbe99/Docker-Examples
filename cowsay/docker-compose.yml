@@ -2,3 +2,4 @@ version: '3.4'
 services:
   cowsay:
     build: .
+    image: cowsay:1.3
