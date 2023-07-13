@@ -1,4 +1,6 @@
 version: '3.9'
 services:
   web:
+    volumes:
+      - ./files/memory/:/usr/local/apache2/htdocs/
     mem_limit: "10m"
