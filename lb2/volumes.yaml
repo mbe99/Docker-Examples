@@ -1,0 +1,5 @@
+version: '3.9'
+services:
+  web:
+    volumes:
+      - ./files/volumes/:/usr/local/apache2/htdocs/
